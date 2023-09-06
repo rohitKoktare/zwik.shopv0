@@ -1,0 +1,118 @@
+summary: Create tabAccount
+tasks:
+# Step -1 Checking if customer id ini Customer Databse table or not
+  - id: mysql_tabcustomer_one
+    fn: com.gs.datastore
+    args:
+      datasource: mysql
+      data:
+        where:
+          id: <% parseInt(inputs.body.customerId) %>
+        select:
+          status: true
+      config:
+        method: tabCustomer.findUnique
+  # check if there is customer id then preceed or else throw an error
+  - id: check_customer_id
+    fn: com.gs.if
+    condition: <% outputs.mysql_tabcustomer_one.data != null  %>
+#  Step -2 check customer is active in the tabCustomer table if , it is active the proceed further or else throw an error
+    tasks:
+      - id: check_status_of_customer
+        fn: com.gs.if
+        condition: <% outputs.mysql_tabcustomer_one.data.status == "Active"  %>
+        tasks:
+          - id: cheaking_account_data
+            fn: com.gs.datastore
+            args:
+              datasource: mysql
+              data:
+                where:
+                  account_type: <% inputs.body.account_type %>
+                  account_number: <% inputs.body.account_number %>
+              config:
+                method: tabAccount.findMany
+#  Step -3 check is there is any previous account data of that perticular customer 
+          - id: accept_if_no_account_exists
+            fn: com.gs.if
+            condition:  <% outputs.cheaking_account_data.data.length == 0 %>
+            tasks:
+              - id: create_account
+                fn: com.gs.datastore
+                args: 
+                  datasource: mysql
+                  data:
+                    data:  <% inputs.body %> 
+                    select:
+                      tsp: true
+                      customerId: true
+                      business: true
+                      account_type: true
+                      account_number: true
+                      account_holder_name: true
+                      expiry_date: true
+                      is_foreign_transactions_allowed: true
+                      enabled: true
+                      id: true
+                  config: 
+                    method: tabAccount.create
+                
+# Step -4 if there is no data of customer in the tabAccount table the create the new account of customer 
+              - id: return_created_account
+                fn: com.gs.return
+                args: |
+                        <js% 
+                          let data =  {
+                            data: outputs.create_account.data
+                          }
+                          return data
+                         %>
+# Step -5 if account is already exist with the same account number and account type then throw an error
+          - id: do_not_accept
+            fn: com.gs.else
+            tasks:
+              - id: return_if_data_exists
+                fn: com.gs.return
+                on_error:
+                  continue: false
+                  response:
+                    success: false
+                    code: 417
+                    data: |
+                        <coffee%  {
+                            exc_type: 'ValidationError',
+                            exception: ' Account Number ' + inputs.body.account_number + ' with the same Account Type ' + inputs.body.account_type + ' already exists'
+                             } %>
+# Step -6 if the status if customer is Not active then throw error 
+      - id: status_is_inactive
+        fn: com.gs.else
+        tasks:
+          - id: reject_if_inactive
+            fn: com.gs.return
+            on_error:
+              continue: false
+              response:
+                success: false
+                code: 417
+                data: |
+                  <coffee% {
+                      exc_type: 'LinkValidationError',
+                      exception: ' Customer Status is: This is second ' + outputs.mysql_tabcustomer_one.data.status
+                            } %>
+# step -7  if the customer Id is not in the tabCustomer table then throw an error 
+  - id: customer_id_not_found
+    fn: com.gs.else
+    tasks:
+      - id: return_the_error
+        fn: com.gs.return
+        on_error:
+          continue: false
+          response: 
+            success: false
+            code: 417
+            data: |
+              <coffee% {
+                  exc_type: 'LinkValidationError',
+                  exception: ' Could not find Customer: '+  inputs.body.customerId
+                        }%>
+
