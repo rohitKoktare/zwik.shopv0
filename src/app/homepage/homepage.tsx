@@ -1,7 +1,5 @@
 import React from 'react'
-import { Flex, Space, Button, Card, Image} from "antd"
-// import Image from 'next/image'
-import Header from '../_component/header'
+import { Flex, Card, Image} from "antd"
 
 
 const Homepage = () => {
