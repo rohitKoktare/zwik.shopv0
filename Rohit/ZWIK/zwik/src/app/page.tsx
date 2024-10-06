@@ -48,7 +48,7 @@ export default function Component() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 ml-28">
               <Card>
                   <Image
-                    src="/zwiklogo.jpeg"
+                    src="/Photoroom-20241004_160454.png"
                     alt="Rangoli Stencil"
                     className="w-full h-60 object-cover rounded-md mb-4"
                     width={300}
