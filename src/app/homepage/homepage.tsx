@@ -13,6 +13,7 @@ const Homepage = () => {
           className="h-10 w-10 rounded-full"
           width={40}
           height={40}
+          preview={false}
         />
         <nav className="ml-auto flex gap-4 sm:gap-6">
           <a className="text-sm font-medium hover:underline underline-offset-4 text-white" href="#">
