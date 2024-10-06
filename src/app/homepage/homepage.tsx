@@ -5,14 +5,15 @@ import { Flex, Card, Image} from "antd"
 const Homepage = () => {
   return (
     <Flex  vertical>
-        <div className="flex flex-col min-h-screen bg-gradient-to-b from-[#A94064] to-[#A94064]">
-        <header className="px-4 lg:px-6 h-16 flex items-center">
+    <div className="flex flex-col min-h-screen bg-gradient-to-b from-[#A94064] to-[#A94064]">
+        <header className="px-4 lg:px-6 h-16 flex bg-[#dd9fb5] items-center">
          <Image
           src="/zwiklogo.jpeg"
           alt="ZWIK logo"
           className="h-10 w-10 rounded-full"
           width={40}
           height={40}
+          preview={false}
         />
         <nav className="ml-auto flex gap-4 sm:gap-6">
           <a className="text-sm font-medium hover:underline underline-offset-4 text-white" href="#">
