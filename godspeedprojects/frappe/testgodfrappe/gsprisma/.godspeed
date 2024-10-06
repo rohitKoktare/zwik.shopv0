@@ -1,1 +1,0 @@
-{"projectName":"gsprisma","mongodb":false,"postgresql":false,"kafka":false,"elasticsearch":false,"redis":false,"svcPort":3000,"mysql":true,"mysqlDbName":"test","mysqlDbPort":3307}
