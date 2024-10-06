@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import {Button, Card, Flex} from 'antd'
+import {Card, Flex} from 'antd'
 
 export default function Component() {
   return (
