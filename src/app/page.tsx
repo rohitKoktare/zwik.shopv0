@@ -17,6 +17,8 @@ export default function Component() {
             Home
           </a>
           
+
+          {/* hello this is the new changes */}
           {/* <a className="text-sm font-medium hover:underline underline-offset-4 text-white" href="#">
             Products
           </a>
